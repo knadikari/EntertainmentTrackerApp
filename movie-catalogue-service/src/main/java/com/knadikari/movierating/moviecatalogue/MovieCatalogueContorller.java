@@ -46,14 +46,10 @@ public class MovieCatalogueContorller {
 
    @GetMapping("/{userId}")
    public List<Catalogueitem> getCatalogue(@PathVariable("userId") String userId) {
-//      List<Rating> ratings = Arrays.asList(
-//              new Rating("1", 5),
-//              new Rating("2", 5)
-//      );
 
       UserRating ratings = webClientBuilder.build()
               .get()
-              .uri("http://localhost:8083/ratingsdata/" + userId)
+              .uri("http://rating-data-service/ratingsdata/" + userId)
               .retrieve()
               .bodyToMono(UserRating.class)
               .block();
@@ -62,11 +58,10 @@ public class MovieCatalogueContorller {
 //         Movie movie = restTemplate.getForObject("http://localhost:8082/movies/" + rating.getMovieId(), Movie.class);
          Movie movie = webClientBuilder.build()
                  .get()
-                 .uri("http://localhost:8082/movies/" + rating.getMovieId())
+                 .uri("http://movie-info-service/movies/" + rating.getMovieId())
                  .retrieve()
                  .bodyToMono(Movie.class)
                  .block();
-
          return new Catalogueitem(movie.getName(), "Transformers", rating.getRating());
       }).collect(Collectors.toList());
    }
